@@ -10,7 +10,7 @@ It's been tested in OSX and Debian, pull requests for other platforms are welcom
 
 ## Demo
 
-[![pick demo](http://img.youtube.com/vi/zH6DeXg5-TQ/0.jpg)](https://www.youtube.com/watch?v=zH6DeXg5-TQ)
+[![pick demo](http://img.youtube.com/vi/gB_ngPuvKko/0.jpg)](https://www.youtube.com/watch?v=gB_ngPuvKko)
 
 ## Installing
 
@@ -21,7 +21,7 @@ It's been tested in OSX and Debian, pull requests for other platforms are welcom
 ### Manual
 * `cd <install-dir>`
 * `git clone -b release --depth 1 https://github.com/bernardorufino/pick.git .`
-* `ln -s $(pwd)/pick.sh /usr/local/pick  # or other directory present in the $PATH variable`
+* `ln -s $(pwd)/pick.sh /usr/local/bin/pick  # or other directory present in the $PATH variable`
 
 ## Using
 Give it a try:
