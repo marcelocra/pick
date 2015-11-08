@@ -2,14 +2,14 @@ import curses
 from utils import printstr
 
 
+UP = (-1, 0)
+RIGHT = (0, 1)
+DOWN = (1, 0)
+LEFT = (0, -1)
+
+
 class View(object):
 
-    DIRECTIONS = {
-        curses.KEY_UP: (-1, 0),
-        curses.KEY_RIGHT: (0, 1),
-        curses.KEY_DOWN: (1, 0),
-        curses.KEY_LEFT: (0, -1),
-    }
     MARGIN = (1, 2)
 
     def __init__(self, table, selectors, output_processors, args):
@@ -57,27 +57,33 @@ class View(object):
     def run(self, screen):
         self._setup_curses(screen)
 
+        from keybindings import check_action_ordinal
         self.draw(resizing=False, redraw_output=True)
         while True:
             c = self.screen.getch()
             redraw_output = False
-            if c == ord('q'):
+            if check_action_ordinal('quit', c):
                 return
-            elif c == ord('i'):
+            elif check_action_ordinal('change_selector', c):
                 i = self._selectors.index(self._selector)
                 i = (i + 1) % len(self._selectors)
                 self._set_selector(i)
-            elif c == ord('o'):
+            elif check_action_ordinal('change_output', c):
                 # TODO: Support switch from table to list with different orientations (row-first or column-first)
                 i = self._next_output_processor_index()
                 self._set_output_processor(i)
                 redraw_output = True
-            elif c == ord('p'):
+            elif check_action_ordinal('print', c):
                 return self._table.get(self._selector.position)
-            elif c in self.DIRECTIONS:
-                di, dj = self.DIRECTIONS[c]
-                self._selector.move(di, dj)
-            elif self.is_enter(c):
+            elif check_action_ordinal('up', c):
+                self._selector.move(*UP)
+            elif check_action_ordinal('down', c):
+                self._selector.move(*DOWN)
+            elif check_action_ordinal('right', c):
+                self._selector.move(*RIGHT)
+            elif check_action_ordinal('left', c):
+                self._selector.move(*LEFT)
+            elif check_action_ordinal('enter', c):
                 return self._output_processor.process()
             else:
                 # TODO: Revisit selector precedence over input handling (mainly capture <enter>)
