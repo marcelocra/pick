@@ -1,5 +1,7 @@
 import curses
+
 from utils import printstr
+from keybindings import check_action_ordinal
 
 
 UP = (-1, 0)
@@ -57,7 +59,6 @@ class View(object):
     def run(self, screen):
         self._setup_curses(screen)
 
-        from keybindings import check_action_ordinal
         self.draw(resizing=False, redraw_output=True)
         while True:
             c = self.screen.getch()
