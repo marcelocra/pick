@@ -2,7 +2,6 @@ from utils import limit
 
 
 class Selector(object):
-
     DIRECTIONS = {
         'up': (-1, 0),
         'down': (1, 0),
@@ -41,7 +40,7 @@ class Selector(object):
     def clear(self, pad):
         pass
 
-    def handle_input(self, action):
+    def handle_action(self, action):
         if self.should_move(action):
             return self.control_movement(action)
 

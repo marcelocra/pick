@@ -29,7 +29,7 @@ class View(object):
         self._selector = self._selectors[i]
         self._selector.setup(self._table, self)
         self._selector.position = old_position
-        
+
     def _set_output_processor(self, i):
         self._output_processor = self._output_processors[i]
         self._output_processor.setup(self._table, self.delimiter)
@@ -55,7 +55,8 @@ class View(object):
 
         self.draw(resizing=False, redraw_output=True)
         while True:
-            action = action_for_ordinal(self.screen.getch())
+            input_char_ordinal = self.screen.getch()
+            action = action_for_ordinal(input_char_ordinal)
             redraw_output = False
             if action == 'quit':
                 return
@@ -74,8 +75,8 @@ class View(object):
                 return self._output_processor.process()
             else:
                 # TODO: Revisit selector precedence over input handling (mainly capture <enter>)
-                redraw_output = self._selector.handle_input(action)
-            resizing = (action == -1)
+                redraw_output = self._selector.handle_action(action)
+            resizing = (input_char_ordinal == -1)
             self.draw(resizing=resizing, redraw_output=redraw_output)
 
     def _next_output_processor_index(self):
