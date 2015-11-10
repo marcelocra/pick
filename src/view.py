@@ -1,13 +1,7 @@
 import curses
 
 from utils import printstr
-from keybindings import check_action_ordinal
-
-
-UP = (-1, 0)
-RIGHT = (0, 1)
-DOWN = (1, 0)
-LEFT = (0, -1)
+from keybindings import action_for_ordinal
 
 
 class View(object):
@@ -61,35 +55,27 @@ class View(object):
 
         self.draw(resizing=False, redraw_output=True)
         while True:
-            c = self.screen.getch()
+            action = action_for_ordinal(self.screen.getch())
             redraw_output = False
-            if check_action_ordinal('quit', c):
+            if action == 'quit':
                 return
-            elif check_action_ordinal('change_selector', c):
+            elif action == 'change_selector':
                 i = self._selectors.index(self._selector)
                 i = (i + 1) % len(self._selectors)
                 self._set_selector(i)
-            elif check_action_ordinal('change_output', c):
+            elif action == 'change_output':
                 # TODO: Support switch from table to list with different orientations (row-first or column-first)
                 i = self._next_output_processor_index()
                 self._set_output_processor(i)
                 redraw_output = True
-            elif check_action_ordinal('print', c):
+            elif action == 'print':
                 return self._table.get(self._selector.position)
-            elif check_action_ordinal('up', c):
-                self._selector.move(*UP)
-            elif check_action_ordinal('down', c):
-                self._selector.move(*DOWN)
-            elif check_action_ordinal('right', c):
-                self._selector.move(*RIGHT)
-            elif check_action_ordinal('left', c):
-                self._selector.move(*LEFT)
-            elif check_action_ordinal('enter', c):
+            elif action == 'enter':
                 return self._output_processor.process()
             else:
                 # TODO: Revisit selector precedence over input handling (mainly capture <enter>)
-                redraw_output = self._selector.handle_input(c)
-            resizing = (c == -1)
+                redraw_output = self._selector.handle_input(action)
+            resizing = (action == -1)
             self.draw(resizing=resizing, redraw_output=redraw_output)
 
     def _next_output_processor_index(self):

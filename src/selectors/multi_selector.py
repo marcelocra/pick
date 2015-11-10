@@ -45,24 +45,25 @@ class MultiSelector(Selector):
         i, j = p
         return min(i1, i2) <= i <= max(i1, i2) and min(j1, j2) <= j <= max(j1, j2)
 
-    def handle_input(self, c):
+    def control_selection(self, action):
         redraw_output = False
+
         if self._state == self.State.move:
-            if c == ord(' '):
+            if action == 'select':
                 self._initial_position = self.position
                 redraw_output = True
                 self._state = self.State.select
-            elif c == ord('d'):
+            elif action == 'clear_selection':
                 self._initial_position = self.position
                 redraw_output = True
                 self._state = self.State.deselect
         elif self._state == self.State.select:
-            if c == ord(' '):
+            if action == 'select':
                 self._table.select_subtable(self._initial_position, self.position)
                 redraw_output = True
                 self._state = self.State.move
         elif self._state == self.State.deselect:
-            if c == ord(' ') or c == ord('d'):
+            if action == 'select' or action == 'clear_selection':
                 self._table.deselect_subtable(self._initial_position, self.position)
                 redraw_output = True
                 self._state = self.State.move

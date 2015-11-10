@@ -24,15 +24,16 @@ class SingleSelector(Selector):
             flags |= curses.color_pair(1)
         return flags
 
-    def handle_input(self, c):
+    def control_selection(self, action):
         redraw_output = False
-        if c == ord(' '):
+
+        if action == 'select':
             self._table.toggle_select(self.position)
             redraw_output = True
-        elif c == ord('d'):
+        elif action == 'clear_selection':
             self._table.clear_selection()
             redraw_output = True
-        elif c == ord('c'):
+        elif action == 'select_column':
             _, j = self.position
             self._table.select_column(j)
             redraw_output = True

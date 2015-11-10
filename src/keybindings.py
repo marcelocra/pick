@@ -1,41 +1,38 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import curses
-import os
 
 
-DEFAULT_ACTION_TABLE = {
-    'quit': [ord('q')],
-    'change_selector': [ord('i')],
-    'change_output': [ord('o')],
-    'print': [ord('p')],
-    'enter': [ord('\n'), curses.KEY_ENTER],
-    'up': [curses.KEY_UP],
-    'right': [curses.KEY_RIGHT],
-    'down': [curses.KEY_DOWN],
-    'left': [curses.KEY_LEFT],
+# ASCII number of the command.
+CTRL_V = 22
+ESC = 27
+
+ACTION_TABLE = {
+    curses.KEY_DOWN: 'down',
+    curses.KEY_ENTER: 'enter',
+    curses.KEY_LEFT: 'left',
+    curses.KEY_RIGHT: 'right',
+    curses.KEY_UP: 'up',
+    ord('\n'): 'enter',
+    ord('i'): 'change_selector',
+    ord('o'): 'change_output',
+    ord('p'): 'print',
+    ord('q'): 'quit',
+    ord('d'): 'clear_selection',
+    ord(' '): 'select',
+    ord('c'): 'select_column',
+
+    # Keybindings for Vim mode. We support these alongside the others above,
+    # which explains why there are repeated bindings.
+    ord('v'): 'select',
+    ord('h'): 'left',
+    ord('j'): 'down',
+    ord('k'): 'up',
+    ord('l'): 'right',
+    CTRL_V: 'select_column',
+    ESC: 'clear_selection',
 }
 
-VIM_ACTION_TABLE = {
-    'quit': [ord('q')],
-    'change_selector': [ord('i')],
-    'change_output': [ord('o')],
-    'print': [ord('p')],
-    'enter': [ord('\n'), curses.KEY_ENTER],
-    'up': [ord('k')],
-    'right': [ord('l')],
-    'down': [ord('j')],
-    'left': [ord('h')],
-}
 
-if os.environ.get('PICK_KEYBINDING_MODE') == 'vim':
-    ACTION_TABLE = VIM_ACTION_TABLE
-else:
-    ACTION_TABLE = DEFAULT_ACTION_TABLE
-
-
-def check_action_ordinal(action, ordinal):
-    """ Check if given **ordinal** is at least one of the expected ones for
-        given **action**, by checking ACTION_TABLE.
-    """
-    return any(filter(lambda x: x == ordinal, ACTION_TABLE[action]))
+def action_for_ordinal(ordinal):
+    return ACTION_TABLE.get(ordinal)
