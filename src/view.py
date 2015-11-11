@@ -1,7 +1,7 @@
 import curses
 
 from utils import printstr
-from keybindings import action_for_ordinal
+from keybindings import Command
 
 
 class View(object):
@@ -55,28 +55,27 @@ class View(object):
 
         self.draw(resizing=False, redraw_output=True)
         while True:
-            input_char_ordinal = self.screen.getch()
-            action = action_for_ordinal(input_char_ordinal)
+            ordinal = self.screen.getch()
             redraw_output = False
-            if action == 'quit':
+            if Command.match(Command.quit, ordinal):
                 return
-            elif action == 'change_selector':
+            elif Command.match(Command.change_selector, ordinal):
                 i = self._selectors.index(self._selector)
                 i = (i + 1) % len(self._selectors)
                 self._set_selector(i)
-            elif action == 'change_output':
+            elif Command.match(Command.change_output, ordinal):
                 # TODO: Support switch from table to list with different orientations (row-first or column-first)
                 i = self._next_output_processor_index()
                 self._set_output_processor(i)
                 redraw_output = True
-            elif action == 'print':
+            elif Command.match(Command.print_text, ordinal):
                 return self._table.get(self._selector.position)
-            elif action == 'enter':
+            elif Command.match(Command.enter, ordinal):
                 return self._output_processor.process()
             else:
                 # TODO: Revisit selector precedence over input handling (mainly capture <enter>)
-                redraw_output = self._selector.handle_action(action)
-            resizing = (input_char_ordinal == -1)
+                redraw_output = self._selector.handle_command(ordinal)
+            resizing = (ordinal == -1)
             self.draw(resizing=resizing, redraw_output=redraw_output)
 
     def _next_output_processor_index(self):

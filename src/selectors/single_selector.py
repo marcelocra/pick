@@ -1,6 +1,8 @@
 import curses
 
 from selectors.selector import Selector
+
+from keybindings import Command
 from utils import printstr
 
 
@@ -24,16 +26,16 @@ class SingleSelector(Selector):
             flags |= curses.color_pair(1)
         return flags
 
-    def control_selection(self, action):
+    def control_selection(self, ordinal):
         redraw_output = False
 
-        if action == 'select':
+        if Command.match(Command.select, ordinal):
             self._table.toggle_select(self.position)
             redraw_output = True
-        elif action == 'clear_selection':
+        elif Command.match(Command.clear_selection, ordinal):
             self._table.clear_selection()
             redraw_output = True
-        elif action == 'select_column':
+        elif Command.match(Command.select_column, ordinal):
             _, j = self.position
             self._table.select_column(j)
             redraw_output = True

@@ -1,4 +1,6 @@
 import curses
+
+from keybindings import Command
 from vendor.enum import Enum
 from selector import Selector
 from utils import printstr
@@ -45,25 +47,26 @@ class MultiSelector(Selector):
         i, j = p
         return min(i1, i2) <= i <= max(i1, i2) and min(j1, j2) <= j <= max(j1, j2)
 
-    def control_selection(self, action):
+    def control_selection(self, ordinal):
         redraw_output = False
 
         if self._state == self.State.move:
-            if action == 'select':
+            if Command.match(Command.select, ordinal):
                 self._initial_position = self.position
                 redraw_output = True
                 self._state = self.State.select
-            elif action == 'clear_selection':
+            elif Command.match(Command.clear_selection, ordinal):
                 self._initial_position = self.position
                 redraw_output = True
                 self._state = self.State.deselect
         elif self._state == self.State.select:
-            if action == 'select':
+            if Command.match(Command.select, ordinal):
                 self._table.select_subtable(self._initial_position, self.position)
                 redraw_output = True
                 self._state = self.State.move
         elif self._state == self.State.deselect:
-            if action == 'select' or action == 'clear_selection':
+            if Command.any_match([Command.select, Command.clear_selection],
+                                 ordinal):
                 self._table.deselect_subtable(self._initial_position, self.position)
                 redraw_output = True
                 self._state = self.State.move
